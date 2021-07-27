@@ -16,15 +16,15 @@ def sample_recipe(user, **params):
     defaults = {
         'title': 'Sample recipe',
         'time_minutes': 10,
-        'price': 5.00
+        'price': 5.00,
     }
     defaults.update(params)
 
     return Recipe.objects.create(user=user, **defaults)
 
 
-class PublicRecipeAPiTest(TestCase):
-    """Test unauthenticated recipe API access"""
+class PublicRecipeApiTests(TestCase):
+    """Test authenticated recipe API access"""
 
     def setUp(self):
         self.client = APIClient()
@@ -60,6 +60,7 @@ class PrivateRecipeApiTests(TestCase):
         self.assertEqual(res.data, serializer.data)
 
     def test_recipes_limited_to_user(self):
+        """Test retriving recipes for users"""
         user2 = get_user_model().objects.create_user(
             'marcelo@ab.com.br',
             'testpass'
@@ -74,6 +75,3 @@ class PrivateRecipeApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(len(res.data), 1)
         self.assertEqual(res.data, serializer.data)
-
-
-
